@@ -7,7 +7,7 @@ def esPalindromo(str: String): Boolean =
   clear == clear.reverse
 
 @main def verificarPalindromo(): Unit =
-  print("Ingrese una cadena para verificar si es palíndromo: ")
+  print("Ingrese una cadena: ")
   val entrada = StdIn.readLine()
   if esPalindromo(entrada) then
     println("Es un palíndromo.")
