@@ -4,10 +4,19 @@ import scala.annotation.tailrec
 
 def binarySearch(arr: List[Int], elt: Int): Option[Int] = {
   @tailrec
-  def rec(elt: Int, n: Int, arr: List[Int]): Option[Int] = {
-    if arr(n) == elt then Some(n)
-    else if arr(n) < elt then rec(elt, n - (arr.size/2), arr.slice(0, n - 1))
-    else rec(elt, n + (arr.size/2), arr.slice(n + 1, arr.size - 1))
+  def rec(l: Int, r: Int): Option[Int] = {
+    if l > r then None
+    else {
+      val mid = l + (r - l) / 2
+      if arr(mid) == elt then Some(mid)
+      else if arr(mid) < elt then rec (mid + 1, r)
+      else rec(l, mid - 1)
+    }
   }
-  rec(elt, arr.size/2, arr)
+  rec(0, arr.length - 1)
+}
+
+@main def check (): Unit = {
+  val arr = List(1, 3, 5, 7, 9, 11)
+  println(binarySearch(arr, 9))
 }
