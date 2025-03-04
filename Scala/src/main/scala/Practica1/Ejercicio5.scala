@@ -1,6 +1,9 @@
 package Practica1
 
+import scala.annotation.tailrec
+
 def filter[A](l: List[A], f: A => Boolean): List[A] = {
+  @tailrec
   def func(remain: List[A], acc: List[A]): List[A] = {
     remain match
       case Nil => acc.reverse
