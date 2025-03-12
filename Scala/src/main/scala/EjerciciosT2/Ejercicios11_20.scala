@@ -1,6 +1,7 @@
 package EjerciciosT2
 
 import scala.annotation.tailrec
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * Ejercicio 11
@@ -66,3 +67,44 @@ def kleene[A](set: Set[A]): Set[Set[A]] = {
 @main
 def kleeneTest(): Unit =
   println(kleene(Set(1,2,3))) // Salida -> Set(), Set(1, 3), Set(2), Set(2, 3), Set(3), Set(1, 2), Set(1), Set(1, 2, 3)
+
+/**
+ * Ejercicio 14
+ * Escribe una función que encuentre la subsecuencia creciente más larga de una lista
+ * de números enteros
+ *
+ * @param arr sobre el que buscar la subsecuencia
+ * @return Una lista con la subsecuencia mas larga encontrada
+ */
+def biggestSubSeq(arr: Array[Int]): List[Int] = {
+  if (arr.isEmpty) return List()
+
+  val n = arr.length
+  val subseq = ArrayBuffer[Int]() // Almacena los elementos finales de subsecuencias óptimas
+  val parent = Array.fill(n)(-1) // Para reconstruir la subsecuencia
+  val idx = Array.fill(n)(-1) // Índices de los elementos en subseq
+
+  for (i <- arr.indices) {
+    val pos = subseq.search(arr(i)).insertionPoint
+    if (pos == subseq.length) subseq.append(arr(i))
+    else subseq(pos) = arr(i)
+
+    idx(pos) = i
+    parent(i) = if (pos > 0) idx(pos - 1) else -1
+  }
+
+  // Reconstrucción de la subsecuencia
+  var lis = List[Int]()
+  var k = idx(subseq.length - 1)
+  while (k >= 0) {
+    lis = arr(k) :: lis
+    k = parent(k)
+  }
+
+  lis
+}
+
+@main
+def biggestSubseqTest(): Unit =
+  val arr = Array(10, 9, 2, 5, 3, 7, 101, 18)
+  println(biggestSubSeq(arr))
