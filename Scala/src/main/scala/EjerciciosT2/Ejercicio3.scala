@@ -1,5 +1,6 @@
 package EjerciciosT2
 
+// Todo -> Probar a hacerlor con un foldLeft
 def caracterMasFrecuente(s: String): Option[(Char, Int)] = {
   s.groupBy(identity)          // Paso 1: Agrupar caracteres en listas
     .view.mapValues(_.length)   // Paso 2: Contar la frecuencia de cada carácter

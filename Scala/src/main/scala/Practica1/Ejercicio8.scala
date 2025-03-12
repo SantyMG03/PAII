@@ -1,7 +1,5 @@
 package Practica1
 
-import scala.annotation.tailrec
-
 def reduce[A](l: List[A], f: (A, A) => A): A =
   l match
     case Nil => throw new IllegalArgumentException("Lista vacia")
