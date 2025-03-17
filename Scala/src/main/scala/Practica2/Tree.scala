@@ -1,4 +1,4 @@
-package practica_22
+package Practica2
 
 import scala.annotation.tailrec
 

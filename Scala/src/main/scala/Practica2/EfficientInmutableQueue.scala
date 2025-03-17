@@ -1,6 +1,6 @@
 package Practica2
 
-class EfficientQueue[T] private (private val front: List[T], private val rear: List[T]) extends ImmutableQueue[T] {
+class EfficientQueue[T]private (private val front: List[T], private val rear: List[T]) extends ImmutableQueue[T] {
   // def this(p: T*) = ...
   // ...
 }

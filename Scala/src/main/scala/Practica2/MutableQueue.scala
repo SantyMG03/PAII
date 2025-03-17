@@ -19,7 +19,7 @@ class ArrayQueue[T](elems: T*) extends MutableQueue[T] {
      else {
        val h = buffer.head
        buffer.remove(0)
-       Some(head)
+       Some(h)
      }
   }
 
