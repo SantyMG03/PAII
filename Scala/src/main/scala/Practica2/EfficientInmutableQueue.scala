@@ -1,8 +1,29 @@
 package Practica2
 
 class EfficientQueue[T]private (private val front: List[T], private val rear: List[T]) extends ImmutableQueue[T] {
-  // def this(p: T*) = ...
-  // ...
+  def this(elems: T*) = this(elems.toList, Nil)
+
+  override def enqueue(elem: T): EfficientQueue[T] = new EfficientQueue[T](front, elem :: rear)
+
+  override def dequeue(): (T, EfficientQueue[T]) = front match {
+    case Nil if rear.isEmpty => throw new NoSuchElementException("dequeue on empty queue")
+    case Nil =>
+      val newFront = rear.reverse
+      (newFront.head, new EfficientQueue[T](newFront.tail, Nil))
+    case h :: t => (h, new EfficientQueue[T](t, rear))
+  }
+
+  override def isEmpty: Boolean = front.isEmpty && rear.isEmpty
+
+  override def toString: String = s"(${(front ++ rear.reverse).mkString(", ")})"
+
+  override def equals(obj: Any): Boolean = obj match {
+    case other: EfficientQueue[T] => (front ++ rear.reverse) == (other.front ++ other.rear.reverse)
+    case _ => false
+  }
+
+  // Sobrecarga de hashCode para que coincida con equals
+  override def hashCode(): Int = (front ++ rear.reverse).hashCode()
 }
 
 @main def testImmutableQueue(): Unit = {

@@ -1,4 +1,4 @@
-package practica_22
+package Practica2
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -28,7 +28,7 @@ class ArrayQueue[T](elems: T*) extends MutableQueue[T] {
   }
 
   override def toString: String = {
-    buffer.mkString("[", ", ", "]")
+    buffer.mkString("Queue(", ", ", ")")
   }
 
   override def equals(obj: Any): Boolean = {
