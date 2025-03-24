@@ -63,3 +63,14 @@ def ex14(): Unit = {
   val freq = words.groupBy(_.toLowerCase).view.mapValues(_.size).toMap
   println(freq)
 }
+
+// ------ Ejercicio 14 ------
+
+@main
+def ex15(): Unit = {
+  val warehouse1 = Map("laptop" -> 5, "mouse" -> 20, "keyboard" -> 10)
+  val warehouse2 = Map("laptop" -> 3, "mouse" -> 15, "monitor" -> 8)
+
+  val res = (warehouse1.toSeq ++ warehouse2.toSeq).map((k,v) => k ->(v + warehouse1.getOrElse(k, 0)))
+  println(res)
+}
