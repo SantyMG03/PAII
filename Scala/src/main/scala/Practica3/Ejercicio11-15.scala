@@ -53,3 +53,13 @@ def ex13(): Unit = {
   val words = sentences.flatMap(_.toLowerCase.split("\\s+")).diff(stopWords).toSet
   println(words)
 }
+
+// ------ Ejercicio 14 ------
+
+@main
+def ex14(): Unit = {
+  val words = List("scala", "is", "awesome", "scala", "functional", "scala", "is", "great")
+
+  val freq = words.groupBy(_.toLowerCase).view.mapValues(_.size).toMap
+  println(freq)
+}
