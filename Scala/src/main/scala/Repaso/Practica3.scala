@@ -158,3 +158,75 @@ def testEx10(): Unit = {
   val l2 = List(3,2,4)
   println(halfEven(l1,l2))
 }
+
+// ------ Ejercicio 11 ------
+
+@main
+def ex11(): Unit = {
+  val logs = List(
+    "ERROR: Null pointer exception",
+    "INFO: User logged in",
+    "ERROR: Out of memory",
+    "WARNING: Disk space low",
+    "INFO: File uploaded",
+    "ERROR: Database connection failed"
+  )
+  val m = logs.groupBy(_.split(":")(0)).view.mapValues(_.size).toMap
+  val e = logs.filter(_.startsWith("ERROR"))
+  println(m)
+  println(e)
+}
+
+// ------ Ejercicio 12 ------
+
+@main
+def ex12():Unit = {
+  val sales = List(
+    ("Laptop", 2, 1000.0),
+    ("Mouse", 10, 15.0),
+    ("Keyboard", 5, 50.0),
+    ("Monitor", 3, 200.0),
+    ("USB Drive", 20, 5.0)
+  )
+
+  val gaining = sales.foldRight(0.0)((elem, acc) => acc + elem._3 * elem._2)
+  println(gaining)
+  val rep = sales.foldRight(List.empty[(String, Double)])((elem, acc) => (elem._1, elem._3 * elem._2) :: acc).sortBy(_._2).reverse
+  println(rep)
+}
+
+// ------ Ejercicio 13 ------
+
+@main
+def ex13(): Unit = {
+  val sentences = Set(
+    "Scala is a functional language",
+    "The power of functional programming is great",
+    "Functional programming is elegant"
+  )
+  val stopWords = Set("a", "the", "is", "of")
+
+  val res = sentences.flatMap(_.toLowerCase.split("\\s+")).diff(stopWords)
+  println(res)
+}
+
+// ------ Ejercicio 14 ------
+
+@main
+def ex14(): Unit = {
+  val words = List("scala", "is", "awesome", "scala", "functional", "scala", "is", "great")
+
+  val res = words.groupBy(_.trim).view.mapValues(_.size).toMap
+  println(res)
+}
+
+// ------ Ejercicio 15 ------
+
+@main
+def ex15(): Unit = {
+  val warehouse1 = Map("laptop" -> 5, "mouse" -> 20, "keyboard" -> 10)
+  val warehouse2 = Map("laptop" -> 3, "mouse" -> 15, "monitor" -> 8)
+
+  val res = (warehouse1.toSeq ++ warehouse2.toSeq).map((k, v) => k -> (v + warehouse1.getOrElse(k, 0)))
+  println(res)
+}
