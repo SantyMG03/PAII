@@ -35,7 +35,8 @@ def ex12(): Unit = {
   val gain = sales.foldRight(0.0)((t, acc) => acc + (t._3 * t._2))
   println(gain)
 
-  val report = sales.foldRight(List.empty[(String, Double)])((t, acc) => (t._1, (t._2 * t._3)) :: acc)
+  val report = sales.foldRight(List.empty[(String, Double)])((t, acc) => (t._1, (t._2 * t._3)) :: acc).
+    sortBy(_._2).reverse
   println(report)
 }
 
