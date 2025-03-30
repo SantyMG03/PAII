@@ -1,15 +1,14 @@
 package EjerciciosT2
 
+import java.io.{File, PrintWriter}
 import scala.annotation.tailrec
 import scala.collection.mutable.ArrayBuffer
+import scala.io.Source
 
 /**
  * Ejercicio 11
  * Implementa una función recursiva para calcular el enésimo número de Fibonacci.
  * Conviértela en recursiva de cola.
- *
- * @param n es el enesimo numero de la secuencia de fibonacci
- * @return El enesimo numero de la secuencia de fibonacci
  */
 def fibonacci(n: Int): Int = {
   @tailrec
@@ -29,9 +28,6 @@ def fibTest(): Unit =
  * Ejercicio 12
  * Implementa una función recursiva que devuelva la suma de los dígitos de un entero
  * dado. Conviértela en recursiva de cola.
- *
- * @param a numero que sumaremos digito a digito 12 = 1 + 2
- * @return El resultado de la suma
  */
 def sumRec(a: Int): Int = {
   @tailrec
@@ -50,10 +46,6 @@ def sumRecTest(): Unit =
  * Ejercicio 13
  * Implementa una función recursiva para generar todos los subconjuntos de un
  * conjunto determinado. Conviértela en recursiva de cola.
- *
- * @param set Conjunto sobre el que haremos el cierre
- * @tparam A
- * @return Conjunto de conjuntos
  */
 def kleene[A](set: Set[A]): Set[Set[A]] = {
   @tailrec
@@ -72,9 +64,6 @@ def kleeneTest(): Unit =
  * Ejercicio 14
  * Escribe una función que encuentre la subsecuencia creciente más larga de una lista
  * de números enteros
- *
- * @param arr sobre el que buscar la subsecuencia
- * @return Una lista con la subsecuencia mas larga encontrada
  */
 def biggestSubSeq(arr: Array[Int]): List[Int] = {
   if (arr.isEmpty) return List()
@@ -108,3 +97,97 @@ def biggestSubSeq(arr: Array[Int]): List[Int] = {
 def biggestSubseqTest(): Unit =
   val arr = Array(10, 9, 2, 5, 3, 7, 101, 18)
   println(biggestSubSeq(arr))
+
+/**
+ * Ejercicio 16
+ * Implementa un programa que encuentre la palabra más larga de un archivo
+ */
+def longestWord(filename: String): Option[String] = {
+  try {
+    val source = Source.fromFile(filename)
+    val words = source.getLines().flatMap(_.split("\\s+")).toList
+    source.close()
+    words.maxByOption(_.length)
+  } catch
+    case e: Exception => println(s"Error al leer el archivo: ${e.getMessage}")
+    None
+}
+
+def copyContent(f1: String, f2: String): Unit = {
+  try {
+    val source = Source.fromFile(f1)
+    val lines = source.getLines().mkString("\n")
+    source.close()
+
+    val writer = PrintWriter(new File(f2))
+    writer.write(lines)
+    writer.close()
+  } catch
+    case e: Exception => println(s"Error al copiar archivo ${e.getMessage}")
+}
+
+/**
+ * Ejercicio 18
+ * Define una función last que devuelva un Option con el último elemento de la lista que
+ * recibe como argumento, si dicho elemento existe, o None en otro caso.
+ */
+def last[A](l: List[A]): Option[A] = {
+  if l.isEmpty then None
+  else Some(l.reverse.head)
+}
+
+@main
+def testEjercicio18(): Unit = {
+  val l = List("a","b","c","d")
+  val l2 = List()
+  println(last(l))
+  println(last(l2))
+}
+
+/**
+ * Ejercicio 19
+ * Define una función nth que devuelva un Option con el elemento de la lista que recibe
+ * como argumento en la posición i, si dicho elemento existe, o None en otro caso.
+ */
+def nth[A](l: List[A], v: A): Option[A] = {
+  if l.contains(v) then Some(v)
+  else None
+  // Some(v).filter(l.contains) tambien sirve
+}
+
+@main
+def testEjercicio19(): Unit = {
+  val l = List("a","b","c","d")
+  println(nth(l, "c"))
+  println(nth(l, "h"))
+}
+
+/**
+ * Ejercicio 20
+ * Define una función recursiva de cola sumaCuadrados(List[Int]) que calcule la suma
+ * de los elementos de la lista de enteros que recibe como argumento
+ */
+def sumaCuadrados(l: List[Int]): Int = {
+  @tailrec
+  def rec(list: List[Int], acc: Int): Int = {
+    list match
+      case Nil => acc
+      case x :: xs => rec(xs, x * x + acc)
+  }
+  rec(l, 0)
+}
+
+/**
+ * Version con foldRight del ejercicio 20
+ */
+def sumaCuadradosf(l: List[Int]): Int = {
+  l.foldRight(0)((elem, acc) => acc + elem * elem)
+}
+
+
+@main
+def testEjercicio20(): Unit = {
+  val l = List(1,2,3)
+  println(sumaCuadradosf(l))
+  println(sumaCuadrados(l))
+}

@@ -9,7 +9,7 @@ def sum(list :List[Int]): Int = {
 }
 
 def product(list :List[Int]): Int = {
-  list.foldRight(1)(_ * _)
+  list.foldRight(1)((acc, elem) => elem * acc)
 }
 
 def length[A](list :List[A]): Int = {
