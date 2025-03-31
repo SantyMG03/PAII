@@ -117,7 +117,7 @@ def testEjercicio25(): Unit = {
 /**
  * Ejercicio 26
  * Escribe una función flatten que transforme una estructura de listas anidadas en una
- * lista aplanada. 
+ * lista aplanada.
  */
 def flatten(l: List[Any]): List[Any] = {
   l.foldLeft(List.empty) {
@@ -129,4 +129,60 @@ def flatten(l: List[Any]): List[Any] = {
 @main
 def testEjercicio26(): Unit = {
   println(flatten(List("a", List("b","c"), List("d", "e"))) )
+}
+
+/**
+ * Ejercicio 27
+ * Escribe una función compress que elimine duplicados consecutivos de una lista.
+ */
+def compress[A](l: List[A]): List[A] = {
+  l.foldRight(List.empty)((elem, acc) => if !acc.contains(elem) then elem :: acc else acc)
+}
+
+@main
+def testEjercicio27(): Unit = {
+  val l = List("a","a","a","b","c","c","d","e","e","e")
+  println(compress(l))
+}
+
+/**
+ * Ejercicio 28
+ * Escribe una función pack que agrupe elementos repetidos consecutivos en sublistas.
+ */
+def pack[A](l: List[A]): List[List[A]] = {
+  l.foldRight(List[List[A]]()) {
+    case (elem, Nil) => List(List(elem))
+    case (elem, (x :: xs)) if x.head == elem => (elem :: x) :: xs
+    case (elem, acc) => List(elem) :: acc
+   }
+}
+
+@main
+def testEjercicio28(): Unit = {
+  val result = pack(List('a', 'a', 'b', 'b', 'b', 'c', 'a', 'a'))
+  println(result)
+}
+
+/**
+ * Ejercicio 29
+ * Escribe una función replicate que construya una lista en la que los elementos de la
+ * lista que recibe se replican tantas veces como indica su segundo argumento.
+ */
+def replicate[A](l: List[A], v: Int): List[A] = {
+  l.foldRight(List.empty)((elem, acc) => List.fill(v)(elem) ::: acc)
+}
+
+@main
+def testEjercicio29(): Unit = {
+  val result = replicate(List(1,2,3,4), 3)
+  println(result)
+}
+
+def range(x: Int, y: Int): List[Int] = {
+  List.range(x,y)
+}
+
+@main
+def testEjercicio30(): Unit = {
+  println(range(5,5))
 }
