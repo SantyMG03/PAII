@@ -68,14 +68,14 @@ def fTailrec(l: List[Int]): List[Int] = {
           val h = head * -1
           help(tail, acc :+ h)
         else
-          help(tail, acc :+ head)
+          help(tail, acc)
       case Nil => acc
   }
   help(l, List.empty)
 }
 
 def fSupFunc(l: List[Int]): List[Int] = {
-  l.map(math.abs)
+  l.filter(_ < 0).map(math.abs)
 }
 
 @main

@@ -149,17 +149,15 @@ def testEjercicio18(): Unit = {
  * Define una función nth que devuelva un Option con el elemento de la lista que recibe
  * como argumento en la posición i, si dicho elemento existe, o None en otro caso.
  */
-def nth[A](l: List[A], v: A): Option[A] = {
-  if l.contains(v) then Some(v)
-  else None
-  // Some(v).filter(l.contains) tambien sirve
+def nth[A](l: List[A], v: Int): Option[A] = {
+  l.lift(v)
 }
 
 @main
 def testEjercicio19(): Unit = {
   val l = List("a","b","c","d")
-  println(nth(l, "c"))
-  println(nth(l, "h"))
+  println(nth(l, 2))
+  println(nth(l, 9))
 }
 
 /**

@@ -18,10 +18,18 @@ def reverse[A](l: List[A]): List[A] = {
   rec(l, Nil)
 }
 
+/**
+ * Version con FoldLeft del ejercicio 21
+ */
+def reversef[A](l: List[A]): List[A] = {
+  l.foldLeft(List.empty)((acc, elem) => elem :: acc)
+}
+
 @main
 def testEjercicio21(): Unit = {
   val l = List(1,2,3,4)
   println(reverse(l))
+  println(reversef(l))
 }
 
 /**
@@ -54,15 +62,19 @@ def listN(n: Int): List[Int] = {
   @tailrec
   def rec(v: Int, acc: List[Int]): List[Int] = {
     if (v < 0) acc
-    else if (v == 0) acc
-    else rec(v - 1, v - 1 :: acc)
+    else rec(v - 1, v :: acc)
   }
   rec(n, Nil)
+}
+
+def listN2(n: Int): List[Int] = {
+  (0 to n).toList
 }
 
 @main
 def testEjercicio23(): Unit = {
   println(listN(5))
+  println(listN2(5))
   println(listN(-7))
 }
 
@@ -178,11 +190,20 @@ def testEjercicio29(): Unit = {
   println(result)
 }
 
+/**
+ * Ejercicio 30
+ * Escribe una función range que devuelva una lista con los enteros entre sus
+ * argumentos (en orden creciente o decreciente según corresponda).
+ */
 def range(x: Int, y: Int): List[Int] = {
-  List.range(x,y)
+  if x < y then (x to y).toList
+  else if x == y then List()
+  else (y to x).reverse.toList
 }
 
 @main
 def testEjercicio30(): Unit = {
+  println(range(10,5))
+  println(range(5,10))
   println(range(5,5))
 }

@@ -56,9 +56,10 @@ def testEjercicio33(): Unit = {
 
 
 def reduce[A](l: List[A], f: (A,A)=>A): A = {
+  // l.tail.foldLeft(l.head)(f) Funciona de la misma manera
   l match
     case Nil => throw new UnsupportedOperationException()
-    case x :: xs => xs .foldLeft(x)(f)
+    case x :: xs => xs.foldLeft(x)(f)
 }
 
 @main
