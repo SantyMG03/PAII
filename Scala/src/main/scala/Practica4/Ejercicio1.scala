@@ -13,7 +13,19 @@ object Ejercicio1 {
     }
   }
 
+  def periodico(t: Long)(b: => Unit): Thread = {
+    val thread = new Thread(() => {
+      while (true) {
+        b
+        Thread.sleep(t)
+      }
+    })
+    thread.start()
+    thread
+  }
+
   def main(args: Array[String]): Unit = {
+    /* Ejercicio 1
     val t = 3
     val turno = Array(1) // Turno inicial para la hebra A
 
@@ -28,7 +40,10 @@ object Ejercicio1 {
     h1.join()
     h2.join()
     h3.join()
+    */
 
-    println() // Salto de línea final
+    // Ejercicio 2
+    periodico(1000) {println("Hebra 1")}
+    periodico(3000) {println("Hebra 2")}
   }
 }
