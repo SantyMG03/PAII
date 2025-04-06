@@ -24,6 +24,22 @@ object Ejercicio1 {
     thread
   }
 
+  def pararlel[A,B](a: => A, b: => B): (A,B) = {
+    var resA: A = null.asInstanceOf[A]
+    var resB: B = null.asInstanceOf[B]
+
+    val t1 = new Thread(() => resA = a)
+    val t2 = new Thread(() => resB = b)
+    
+    t1.start()
+    t2.start()
+    
+    t1.join()
+    t2.join()
+
+    (resA, resB)
+  }
+
   def main(args: Array[String]): Unit = {
     /* Ejercicio 1
     val t = 3
