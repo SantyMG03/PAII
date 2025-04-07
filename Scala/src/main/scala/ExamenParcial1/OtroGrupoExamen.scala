@@ -87,6 +87,6 @@ def ejercicio2(): Unit = {
   val sol = sentences.filter(_.startsWith("FINAL")).flatMap(_.split(":|\\s+")).map(_.toLowerCase).
     filterNot(_.isBlank).filterNot(stopWords.contains).filterNot(_ == "final").
     groupBy(identity).view.mapValues(_.size).toMap
-  
+
   println(sol)
 }
