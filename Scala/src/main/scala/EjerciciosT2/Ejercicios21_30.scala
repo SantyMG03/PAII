@@ -147,14 +147,14 @@ def testEjercicio26(): Unit = {
  * Ejercicio 27
  * Escribe una función compress que elimine duplicados consecutivos de una lista.
  */
-def compress[A](l: List[A]): List[A] = {
+def compres[A](l: List[A]): List[A] = {
   l.foldRight(List.empty)((elem, acc) => if !acc.contains(elem) then elem :: acc else acc)
 }
 
 @main
 def testEjercicio27(): Unit = {
   val l = List("a","a","a","b","c","c","d","e","e","e")
-  println(compress(l))
+  println(compres(l))
 }
 
 /**
