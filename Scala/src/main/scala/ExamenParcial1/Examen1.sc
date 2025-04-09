@@ -28,7 +28,7 @@ class Bag[T] private(private val elems: Map[T, Int]) extends ImmutableBag[T] {
   override def isEmpty: Boolean = elems.isEmpty
   
   def union(other: Bag[T]): Bag[T] = {
-    Bag(elems.foldLeft(other.elems){ case (acc, (k,v)) => acc.updated(k, acc.getOrElse(k, 0) + value)})
+    Bag(elems.foldLeft(other.elems){ case (acc, (k,v)) => acc.updated(k, acc.getOrElse(k, 0) + v)})
   }
 
   override def equals(other: Any): Boolean = {
