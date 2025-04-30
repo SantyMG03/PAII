@@ -9,15 +9,39 @@ class Cadena(n: Int) {
   private val tipo = Array.fill(3)(0) // el buffer
   private var cuentaTotal = 0
   private val esperaCol = Semaphore(1) // CS- Colocalor
+  private val mutex = Semaphore(1) // CS- Colocalor
+  private val esperaEmp = Array.fill(3)(Semaphore(0)) // CS- Empaquetador
+
   def retirarProducto(p: Int) = {
     // ...
+    esperaEmp(p).acquire()
+    mutex.acquire()
+    tipo(p) -= 1
+    if(tipo.sum < n) {
+      esperaCol.release()
+    }
     log(s"Empaquetador $p retira un producto. Quedan ${tipo.mkString("[",",","]")}")
+    if (tipo(p) > 0) {
+      esperaEmp(p).release()
+    }
+    mutex.release()
     // ...
   }
   def nuevoProducto(p:Int) = {
     // ...
-    log(s"Colocador pone un producto $p. Quedan ${tipo.mkString("[",",","]")}")
+    esperaCol.acquire()
+    mutex.acquire()
+    tipo(p) += 1
+    cuentaTotal += 1
+    log(s"Colocador pone un producto $p. Quedan ${tipo.mkString("[", ",", "]")}")
     log(s"Total de productos empaquetados $cuentaTotal")
+    if (tipo(p) == 1) {
+      esperaEmp(p).release()
+    }
+    if (tipo.sum < n) {
+      esperaCol.release()
+    }
+    mutex.release()
     // ...
   }
 }

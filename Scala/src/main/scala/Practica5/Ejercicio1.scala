@@ -9,22 +9,38 @@ object mediciones {
   // CS-Trabajador: no puede realizar su tarea hasta que no están las
   // tres mediciones
 
+  private val mutex = new Semaphore(1)
+  private val espera = new Semaphore(0)
+  private val sensores = Array.fill(3)(new Semaphore(1))
+  private var ndatos = 0
 
   def nuevaMedicion(id: Int) = {
     // ...
+    sensores(id).acquire()
+    mutex.acquire()
     log(s"Sensor $id almacena su medición" )
+    ndatos += 1
+    if (ndatos == 3)
+      espera.release()
+    mutex.release()
     // ...
   }
 
   def leerMediciones() = {
     // ...
+    espera.acquire()
+    mutex.acquire()
     log(s"El trabajador recoge las mediciones")
+    ndatos = 0
+    mutex.release()
     // ...
   }
 
   def finTarea() = {
     // ...
     log(s"El trabajador ha terminado sus tareas")
+    for(i <- 0 until sensores.length)
+      sensores(i).release()
     // ...
   }
 }

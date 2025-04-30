@@ -31,7 +31,7 @@ object mesa {
     // ...
   }
 }
-
+/*
 object Ejercicio6 {
   def main(args: Array[String]): Unit =
   val fumador = new Array[Thread](3)
@@ -49,3 +49,4 @@ object Ejercicio6 {
       mesa.nuevosIngr(Random.nextInt(3))
   }
 }
+*/

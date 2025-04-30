@@ -27,7 +27,7 @@ class Olla(R: Int) {
     // ...
   }
 }
-
+/*
 object Ejercicio8 {
   def main(args: Array[String]): Unit =
   val NCan = 20
@@ -46,3 +46,4 @@ object Ejercicio8 {
       olla.llenarOlla
   }
 }
+*/

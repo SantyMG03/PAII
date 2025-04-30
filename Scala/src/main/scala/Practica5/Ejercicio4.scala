@@ -9,6 +9,9 @@ class Coche(C: Int) extends Thread {
   // CS-pasajero2: un pasajero que está en el coche no puede bajarse hasta que haya terminado el viaje
   // CS-coche: el coche espera a que se hayan subido C pasajeros para dar una vuelta
   private var numPas = 0
+  private val viaje = Semaphore(0)
+  private val mutex = Semaphore(1) // CS-pasajero2
+  private val esperaCoche = Semaphore(1) // CS-coche
   // ...
 
   def nuevoPaseo(id: Int) = {
@@ -44,14 +47,15 @@ class Coche(C: Int) extends Thread {
 }
 
 object Ejercicio4 {
-  def main(args: Array[String]) =
-  val coche = new Coche(5)
-  val pasajero = new Array[Thread](12)
-  coche.start()
-  for (i <- 0 until pasajero.length)
-    pasajero(i) = thread {
-      while (true)
-        Thread.sleep(Random.nextInt(500)) // el pasajero se da una vuelta por el parque
-        coche.nuevoPaseo(i)
-    }
+  def main(args: Array[String]) = {
+    val coche = new Coche(5)
+    val pasajero = new Array[Thread](12)
+    coche.start()
+    for (i <- 0 until pasajero.length)
+      pasajero(i) = thread {
+        while (true)
+          Thread.sleep(Random.nextInt(500)) // el pasajero se da una vuelta por el parque
+          coche.nuevoPaseo(i)
+      }
+  }
 }

@@ -7,25 +7,37 @@ object aseo{
   // CS-EquipoLimpieza: Espera si hay clientes en el aseo
 
   // ...
+  var numClientes = 0
+  private val esperaLimpieza = Semaphore(0) // CS-EquipoLimpieza
+  private val esperaCliente = Semaphore(1) // CS-Cliente
 
   def entraCliente(id:Int)={
     // ...
+    esperaCliente.acquire()
+    numClientes += 1
     log(s"Entra cliente $id. Hay $numClientes clientes.")
+    esperaCliente.release()
     // ...
   }
   def saleCliente(id:Int)={
     // ...
+    esperaCliente.acquire()
+    numClientes -= 1
     log(s"Sale cliente $id. Hay $numClientes clientes.")
+    if numClientes == 0 then esperaLimpieza.release()
+    else esperaCliente.release()
     // ...
   }
   def entraEquipoLimpieza ={
     // ...
+    esperaLimpieza.acquire()
     log(s"        Entra el equipo de limpieza.")
     // ...
   }
   def saleEquipoLimpieza = {
     // ...
     log(s"        Sale el equipo de limpieza.")
+    esperaCliente.release()
     // ...
   }
 }
