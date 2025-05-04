@@ -10,22 +10,36 @@ class Coche(C: Int) extends Thread {
   // CS-coche: el coche espera a que se hayan subido C pasajeros para dar una vuelta
   private var numPas = 0
   private val viaje = Semaphore(0)
+  private val bajan = Semaphore(0) // CS-pasajero1
   private val mutex = Semaphore(1) // CS-pasajero2
-  private val esperaCoche = Semaphore(1) // CS-coche
+  private val suben = Semaphore(1) // CS-coche
   // ...
 
   def nuevoPaseo(id: Int) = {
     // el pasajero id quiere dar un paseo en la montaña rusa
     // ...
+    suben.acquire()
+    mutex.acquire()
+    numPas += 1
     log(s"El pasajero $id se sube al coche. Hay $numPas pasajeros.")
+    if (numPas == C) viaje.release()
+    else suben.release()
+    mutex.release()
     // ...
+    bajan.acquire()
+    mutex.acquire()
+    numPas -= 1
     log(s"El pasajero $id se baja del coche. Hay $numPas pasajeros.")
+    if (numPas > 0) bajan.release()
+    else suben.release()
+    mutex.release()
     // ...
   }
 
   def esperaLleno = {
     // el coche espera a que se llene para dar un paseo
     // ...
+    viaje.acquire()
     log(s"        Coche lleno!!! empieza el viaje....")
     // ...
   }
@@ -34,6 +48,7 @@ class Coche(C: Int) extends Thread {
     // el coche indica que se ha terminado el viaje
     // ...
     log(s"        Fin del viaje... :-(")
+    bajan.release()
     // ...
   }
 
