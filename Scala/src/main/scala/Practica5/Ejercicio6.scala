@@ -31,22 +31,23 @@ object mesa {
     // ...
   }
 }
-/*
+
 object Ejercicio6 {
-  def main(args: Array[String]): Unit =
-  val fumador = new Array[Thread](3)
-  for (i <- fumador.indices)
-    fumador(i) = thread {
+  def main(args: Array[String]): Unit = {
+    val fumador = new Array[Thread](3)
+    for (i <- fumador.indices)
+      fumador(i) = thread {
+        while (true)
+          Thread.sleep(Random.nextInt(500))
+          mesa.quieroFumar(i)
+          Thread.sleep(Random.nextInt(200))
+          mesa.finFumar(i)
+      }
+    val agente = thread {
       while (true)
         Thread.sleep(Random.nextInt(500))
-        mesa.quieroFumar(i)
-        Thread.sleep(Random.nextInt(200))
-        mesa.finFumar(i)
+        mesa.nuevosIngr(Random.nextInt(3))
     }
-  val agente = thread {
-    while (true)
-      Thread.sleep(Random.nextInt(500))
-      mesa.nuevosIngr(Random.nextInt(3))
   }
 }
-*/
+
