@@ -5,7 +5,9 @@ import scala.util.Random
 
 object mesa {
   // CS-fumador i: No puede fumar hasta que estén en la mesa los ingredientes que le faltan
+  private val fumadores = Array.fill(3)(new Semaphore(0))
   // CS-Agente: No pone un nuevo ingrediente hasta que el fumador no ha terminado de fumar
+  private val mutex = new Semaphore(1)
 
   private var ingr = -1 // el ingrediente que no está-- -1=mesa vacía, 0=no tabaco, 1=no papel, 2=no cerillas
   // ...
@@ -13,6 +15,7 @@ object mesa {
   def quieroFumar(i: Int) = {
     // el fumador i quiere fumar
     // ...
+    fumadores(i).acquire()
     log(s"Fumador $i fuma")
     // ...
   }
@@ -21,13 +24,16 @@ object mesa {
     // el fumador i termina de fumar
     // ...
     log(s"Fumador $i termina de fumar")
+    mutex.release()
     // ...
   }
 
   def nuevosIngr(ingr: Int) = {
     // el agente pone nuevos ingredientes (ingr es el ingrediente que no pone)
     // ...
+    mutex.acquire()
     log(s"El agente no pone ingrediente $ingr")
+    fumadores(ingr).release()
     // ...
   }
 }
