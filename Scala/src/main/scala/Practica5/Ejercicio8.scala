@@ -17,7 +17,7 @@ class Olla(R: Int) {
     comen.acquire()
     olla -= 1
     log(s"Caníbal $i coge una ración de la olla. Quedan $olla raciones.")
-    if olla > 0 then comen.release()
+    if (olla > 0) comen.release()
     else cocina.release()
     // ...
   }

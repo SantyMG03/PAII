@@ -4,79 +4,66 @@ import java.util.concurrent.*
 import scala.util.Random
 
 object gestorAgua {
-  // CS-Hid1: El hidrógeno que quiere formar una molécula espera si ya hay dos hidrógenos
-  // CS-Hid2: Un hidrógeno debe esperar a los otros dos átomos para formar la molécula
-  // CS-Ox1: El oxígeno que quiere formar una molécula espera si ya hay un oxígeno
-  // CS-Ox2: El oxígeno debe esperar a los otros dos átomos para formar la molécula
-
-  private val mutex = new Semaphore(1) // protege las variables compartidas
+  
+  private val molecula = new Semaphore(1) // Para la ejecucion si todavia no se puede formar agua
+  private val mutex = new Semaphore(1) // Para la exclusión mutua entre los hidrógenos y el oxígeno
 
   // Binarios para bloquear hidrógenos y oxígenos
-  private val hReady = new Semaphore(0) // para despertar hidrógenos
-  private val oReady = new Semaphore(0) // para despertar oxígeno
-
-  // Semáforo binario para sincronizar la salida de los 3 participantes
-  private val barrier = new Semaphore(0)
+  private val esperaH = new Semaphore(1) // para despertar hidrógenos
+  private val esperaO = new Semaphore(1) // para despertar oxígeno
 
   // Variables de control
-  private var waitingH = 0
-  private var waitingO = 0
+  private var numH = 0
+  private var numO = 0
 
 
   def oxigeno(id: Int) = {
     log(s"Oxígeno $id quiere formar una molécula")
 
-    mutex.acquire()
-    waitingO += 1
-    if (waitingH >= 2 && waitingO >= 1) {
-      // Hay suficientes para formar una molécula
-      waitingH -= 2
-      waitingO -= 1
-      hReady.release()
-      hReady.release()
-      oReady.release()
+    esperaO.acquire()
+
+    numO += 1
+    if (numH + numO < 3) {
+      mutex.release()
+      molecula.acquire()
+      mutex.acquire()
+    } else {
+      numO -= 1
+    }
+    if (numH + numO > 0) {
+      log(s"Molecula formada!!! Restantes $numO oxígeno(s) y $numH hidrógeno(s)")
+      molecula.release()
+    } else {
+      esperaO.release()
+      esperaH.release()
     }
     mutex.release()
-
-    oReady.acquire()
-    log(s"Oxígeno $id participa en la molécula")
-
-    // Esperar a que todos lleguen
-    barrier.release()
-    barrier.release()
-    barrier.release()
-
-    // Esperar a que todos se liberen (solo uno lo hace: oxígeno)
-    barrier.acquire()
-    barrier.acquire()
-    barrier.acquire()
-
-    log(s"      Molécula formada!!!")
-    log(s"Sale oxígeno $id")
   }
 
   def hidrogeno(id: Int) = {
     log(s"Hidrógeno $id quiere formar una molécula")
 
+    esperaH.acquire()
     mutex.acquire()
-    waitingH += 1
-    if (waitingH >= 2 && waitingO >= 1) {
-      // Hay suficientes para formar una molécula
-      waitingH -= 2
-      waitingO -= 1
-      hReady.release() // liberar un H
-      hReady.release() // liberar otro H
-      oReady.release() // liberar O
+    numH += 1
+    if (numH < 2) {
+      esperaH.release()
+      mutex.release()
+    }
+    if (numH + numO < 3) {
+      mutex.release()
+      molecula.acquire()
+      mutex.acquire()
+    }
+    numH -= 1
+    if (numH + numO > 0){
+      log(s"Molecula formada!!! Restantes $numO oxígeno(s) y $numH hidrógeno(s)")
+      molecula.release()
+    } else {
+      esperaO.release()
+      esperaH.release()
     }
     mutex.release()
-
-    hReady.acquire()
-    log(s"Hidrógeno $id participa en la molécula")
-
-    // Esperar a que todos lleguen
-    barrier.release() // este H está listo
-    barrier.acquire() // espera a los otros dos
-    log(s"Sale hidrógeno $id")
   }
 }
 object Ejercicio5 {
