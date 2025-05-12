@@ -20,7 +20,7 @@ public class Pasajero extends Thread{
 				Thread.sleep(r.nextInt(1000));
 				barca.subir(id, orilla);
 				Thread.sleep(r.nextInt(500));
-				orilla= barca.bajar(id);				
+				orilla = barca.bajar(id);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

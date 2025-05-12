@@ -52,10 +52,9 @@ public class Barca {
 		if (pasajeros > 0) bajan.release();
 		if (pasajeros == 0) {
 			System.out.println("			Barca vacia");
-			embarcadero[orilla].release();
 			suben.release();
 		}
-		return id;
+		return orilla;
 	}
 	/*
 	 * El Capitan espera hasta que se suben 3 pasajeros para comenzar el viaje
@@ -70,6 +69,7 @@ public class Barca {
 	public  void finViaje() throws InterruptedException{
 		orilla = (orilla + 1) % 2;
 		System.out.println("La barca llega a la orilla " + orilla);
+		embarcadero[orilla].release();
 		bajan.release();
 	}
 
