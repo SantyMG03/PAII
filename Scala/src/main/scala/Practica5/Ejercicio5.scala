@@ -5,7 +5,7 @@ import scala.util.Random
 
 object gestorAgua {
   
-  private val molecula = new Semaphore(1) // Para la ejecucion si todavia no se puede formar agua
+  private val molecula = new Semaphore(0) // Para la ejecucion si todavia no se puede formar agua
   private val mutex = new Semaphore(1) // Para la exclusión mutua entre los hidrógenos y el oxígeno
 
   // Binarios para bloquear hidrógenos y oxígenos
@@ -18,20 +18,19 @@ object gestorAgua {
 
 
   def oxigeno(id: Int) = {
-    log(s"Oxígeno $id quiere formar una molécula")
-
     esperaO.acquire()
-
+    mutex.acquire()
     numO += 1
+    log(s"Oxígeno $id quiere formar una molécula")
     if (numH + numO < 3) {
       mutex.release()
       molecula.acquire()
       mutex.acquire()
     } else {
-      numO -= 1
+      log(s"      Molecula formada!!! ")
     }
+    numO -= 1
     if (numH + numO > 0) {
-      log(s"Molecula formada!!! Restantes $numO oxígeno(s) y $numH hidrógeno(s)")
       molecula.release()
     } else {
       esperaO.release()
@@ -41,23 +40,22 @@ object gestorAgua {
   }
 
   def hidrogeno(id: Int) = {
-    log(s"Hidrógeno $id quiere formar una molécula")
-
     esperaH.acquire()
     mutex.acquire()
     numH += 1
+    log(s"Hidrógeno $id quiere formar una molécula")
     if (numH < 2) {
       esperaH.release()
-      mutex.release()
     }
     if (numH + numO < 3) {
       mutex.release()
       molecula.acquire()
       mutex.acquire()
+    } else {
+      log(s"      Molecula formada!!!")
     }
     numH -= 1
     if (numH + numO > 0){
-      log(s"Molecula formada!!! Restantes $numO oxígeno(s) y $numH hidrógeno(s)")
       molecula.release()
     } else {
       esperaO.release()
