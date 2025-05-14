@@ -25,7 +25,7 @@ object Guarderia{
     
   }
   def saleAdulto(id:Int) = synchronized {
-    while (nBebe > (3 * nAdulto) - 1) wait()
+    while (nBebe > 3 * (nAdulto - 1)) wait()
     nAdulto -= 1
     log(s"Ha salido un adulto. Bebés=$nBebe, Adultos=$nAdulto")
   }

@@ -8,30 +8,42 @@ class Coche(C:Int) extends Thread{
   //CS-pasajero2: un pasajero que está en el coche no se puede bajarse hasta que haya terminado el viaje
   //CS-coche: el coche espera a que se hayan subido C pasajeros para dar una vuelta
   private var numPas = 0
-  
+  private var entrada = true
+  private var fin = false
+  private var lleno = false
 
+  def nuevoPaseo(id:Int)= synchronized {
+    while (!entrada) wait()
+    numPas += 1
+    log(s"El pasajero $id sube al coche. Hay $numPas pasajeros")
+    if (numPas == C) {
+      entrada = false
+      lleno = true
+      notify()
+    }
 
-  def nuevoPaseo(id:Int)= {
-    //el pasajero id  quiere dar un paseo en la montaña rusa
-    
-
-    log(s"El pasajero $id se sube al coche. Hay $numPas pasajeros.")
-
-   
-    log(s"El pasajero $id se baja del coche. Hay $numPas pasajeros.")
-   
+    while(!fin) wait()
+    numPas -= 1
+    log(s"El pasajero $id baja del coche. Hay $numPas pasajeros")
+    if (numPas == 0) {
+      fin = false
+      entrada = true
+      notifyAll()
+    }
   }
 
-  def esperaLleno =  {
+  def esperaLleno = synchronized {
     //el coche espera a que se llene para dar un paseo
-    
+    while (!lleno) wait()
     log(s"        Coche lleno!!! empieza el viaje....")
+    lleno = false
   }
 
-  def finViaje =  {
+  def finViaje = synchronized {
     //el coche indica que se ha terminado el viaje
     log(s"        Fin del viaje... :-(")
-    
+    fin = true
+    notifyAll()
   }
 
   override def run = {
@@ -53,5 +65,5 @@ object Ejercicio4 {
           Thread.sleep(Random.nextInt(500))
           coche.nuevoPaseo(i)
       }
-      
+
 }
