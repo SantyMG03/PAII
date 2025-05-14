@@ -8,22 +8,25 @@ object Guarderia{
   //nBebe<=3*Adulto (3bebes,1adulto),(4bebes,2adulto)
   
 
-  def entraBebe(id:Int) =  {
-   
+  def entraBebe(id:Int) = synchronized {
+    while (nBebe + 1 > 3 * nAdulto || nAdulto == 0) wait()
+    nBebe += 1
     log(s"Ha llegado un bebé. Bebés=$nBebe, Adultos=$nAdulto")
   }
-  def saleBebe(id:Int) =  {
-    
+  def saleBebe(id:Int) = synchronized {
+    nBebe -= 1
     log(s"Ha salido un bebé. Bebés=$nBebe, Adultos=$nAdulto")
-  
+    notifyAll()
   }
-  def entraAdulto(id:Int) =  {
-    
+  def entraAdulto(id:Int) = synchronized {
+    nAdulto += 1
     log(s"Ha llegado un adulto. Bebés=$nBebe, Adultos=$nAdulto")
+    notifyAll()
     
   }
-  def saleAdulto(id:Int) =  {
-    
+  def saleAdulto(id:Int) = synchronized {
+    while (nBebe > (3 * nAdulto) - 1) wait()
+    nAdulto -= 1
     log(s"Ha salido un adulto. Bebés=$nBebe, Adultos=$nAdulto")
   }
 }
