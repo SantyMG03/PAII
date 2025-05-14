@@ -5,18 +5,20 @@ import scala.util.Random
 class Bandeja(R:Int){
 
   private var raciones = 0
-  
-  
 
-  def quieroRacion(id:Int)= {
-    
+
+  def quieroRacion(id:Int)= synchronized {
+
+    while (raciones == 0) wait()
+    raciones -= 1
     log(s"Niño $id ha cogido una ración. Quedan $raciones")
-   
+    if (raciones == 0) notify()
   }
-  def tarta()= {
-    
+  def tarta()= synchronized {
+    while(raciones != 0) wait()
+    raciones = R
     log("El pastelero pone una nueva tarta.")
-   
+    notifyAll()
   }
 }
 object Ejercicio6 {

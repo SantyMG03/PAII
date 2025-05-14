@@ -6,11 +6,12 @@ class Buffer(ncons:Int,tam:Int){
   //ncons-número de consumidores
   //tam-tamaño del buffer
   private val buffer = new Array[Int](tam)
+  private var nDatos = 0
+  private var index = 0
   
   def nuevoDato(dato:Int) = {
-    //el productor pone un nuevo dato
-    
-   
+    //el productor pone un nuevo dato 
+    while (nDatos == tam) wait()
     log(s"Productor almacena $dato: buffer=${buffer.mkString("[",",","]")}}")
     
   }
