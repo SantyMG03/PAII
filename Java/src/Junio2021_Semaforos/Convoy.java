@@ -6,6 +6,7 @@ public class Convoy {
 
 	private int tam;
 	private int size;
+	private int lider;
 	private Semaphore esperaLleno;
 	private Semaphore viaje;
 	private Semaphore esperaVacio;
@@ -15,6 +16,7 @@ public class Convoy {
 		//TODO
 		this.tam = tam;
 		this.size = 0;
+		this.lider = 0;
 		esperaLleno = new Semaphore(1);
 		viaje = new Semaphore(0);
 		esperaVacio = new Semaphore(0);
@@ -30,6 +32,7 @@ public class Convoy {
 		esperaLleno.acquire();
 		if (size == 0){
 			System.out.println("** Furgoneta " +id + " lidera del convoy **");
+			lider = id;
 		} else {
 			System.out.println("Furgoneta "+id+" seguidora");
 		}
@@ -47,7 +50,7 @@ public class Convoy {
 	public void calcularRuta(int id) throws InterruptedException {
 		//TODO
 		viaje.acquire();
-		System.out.println("** Furgoneta "+id+" lider:  ruta calculada, nos ponemos en marcha **");
+		System.out.println("** Furgoneta "+lider+" lider:  ruta calculada, nos ponemos en marcha **");
 	}
 	
 	
@@ -60,7 +63,7 @@ public class Convoy {
 		System.out.println("** 				Destino alcanzado			 **");
 		esperaVacio.release();
 		ultimo.acquire();
-		System.out.println("** Furgoneta "+id+" lider abandona el convoy **");
+		System.out.println("** Furgoneta "+lider+" lider abandona el convoy **");
 		size--;
 		esperaLleno.release();
 	}

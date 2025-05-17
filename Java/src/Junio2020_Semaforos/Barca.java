@@ -1,7 +1,5 @@
 package Junio2020_Semaforos;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 public class Barca {
@@ -18,7 +16,7 @@ public class Barca {
 		this.orilla = 1;
 		embarcadero = new Semaphore[2];
 		embarcadero[0] = new Semaphore(0);
-		embarcadero[1] = new Semaphore(1);
+		embarcadero[1] = new Semaphore(1); // Embarcadero inicial
 		viaje = new Semaphore(0);
 		suben = new Semaphore(1);
 		bajan = new Semaphore(0);
@@ -39,11 +37,12 @@ public class Barca {
 			} else {
 				viaje.release();
 			}
-		}
+		} // Si la pos del pasajero no coincide con la orilla de la barca no hacemos nada
 	}
 	
 	/*
 	 * Cuando el viaje ha terminado, el Pasajero que esta en la barca se baja
+	 * Devuelve la orilla donde se esta bajando el pasajero
 	 */
 	public  int bajar(int id) throws InterruptedException{
 		bajan.acquire();
@@ -56,6 +55,7 @@ public class Barca {
 		}
 		return orilla;
 	}
+
 	/*
 	 * El Capitan espera hasta que se suben 3 pasajeros para comenzar el viaje
 	 */
@@ -63,11 +63,12 @@ public class Barca {
 		viaje.acquire();
 		System.out.println("La barca esta completa, comienza su viaje");
 	}
+
 	/*
 	 * El Capitan indica a los pasajeros que el viaje ha terminado y tienen que bajarse
 	 */
 	public  void finViaje() throws InterruptedException{
-		orilla = (orilla + 1) % 2;
+		orilla = (orilla + 1) % 2; // Cambio de orilla circular
 		System.out.println("La barca llega a la orilla " + orilla);
 		embarcadero[orilla].release();
 		bajan.release();

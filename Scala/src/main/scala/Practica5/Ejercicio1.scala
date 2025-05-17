@@ -20,8 +20,7 @@ object mediciones {
     mutex.acquire()
     log(s"Sensor $id almacena su medición" )
     ndatos += 1
-    if (ndatos == 3)
-      espera.release()
+    if (ndatos == 3) espera.release()
     mutex.release()
     // ...
   }

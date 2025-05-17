@@ -34,7 +34,6 @@ public class Curso {
 	//El alumno informa que ya ha terminado de cursar la parte de iniciacion
 	public void finIniciacion(int id) throws InterruptedException{
 		mutex.acquire();
-		//Mensaje a mostrar para indicar que el alumno ha terminado la parte de principiantes
 		System.out.println("PARTE INICIACION: Alumno " + id + " termina parte iniciacion");
 		alumIni--;
 		if (alumIni < 10) iniciacion.release();
@@ -49,16 +48,19 @@ public class Curso {
 	public void esperaPlazaAvanzado(int id) throws InterruptedException{
 		//Espera a que no haya otro grupo realizando esta parte
 		avanzado.acquire();
+		mutex.acquire();
 		alumAva++;
-		//Mensaje a mostrar si el alumno tiene que esperar al resto de miembros en el grupo
 		System.out.println("PARTE AVANZADA: Alumno " + id + " espera a que haya " + ALUMNOS_AV + " alumnos");
 		if (alumAva == 3) working.release();
 		else avanzado.release();
+		mutex.release();
+
 		//Espera a que haya tres alumnos conectados
 		working.acquire();
-		//Mensaje a mostrar cuando el alumno pueda empezar a cursar la parte avanzada
+		mutex.acquire();
 		System.out.println("PARTE AVANZADA: Hay " + ALUMNOS_AV + " alumnos. Alumno " + id + " empieza el proyecto");
 		worked ++;
+		mutex.release();
 	}
 	
 	/* El alumno:
@@ -69,14 +71,14 @@ public class Curso {
 		//Espera a que los 3 alumnos terminen su parte avanzada
 		if (worked < 3) {
 			working.release();
-			//Mensaje a mostrar si el alumno tiene que esperar a que los otros miembros del grupo terminen
 			System.out.println("PARTE AVANZADA: Alumno " +  id + " termina su parte del proyecto. Espera al resto");
 		} else if (worked == 3) {
-			//Mensaje a mostrar cuando los tres alumnos del grupo han terminado su parte
+			mutex.acquire();
 			System.out.println("PARTE AVANZADA: LOS " + ALUMNOS_AV + " ALUMNOS HAN TERMINADO EL CURSO");
 			worked = 0;
-			alumAva = 0;
+			alumAva -= 3;
 			avanzado.release();
+			mutex.release();
 		}
 	}
 }
