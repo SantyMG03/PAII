@@ -1,6 +1,7 @@
 package ExamenParcial2Software
 
 import java.util.concurrent.Semaphore
+import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
 class Salon(cap: Int) {
@@ -16,9 +17,11 @@ class Salon(cap: Int) {
   private val ultimo = new Semaphore(0)
   private val entran = new Semaphore(1)
   private val salen = new Semaphore(1)
+  private val mutex = new Semaphore(1)
 
   private var despierto = false
-  private var fiesteros = 0;
+  private var fiesteros = 0
+  private val fiesta = ListBuffer[Int]()
   /*
   * Condiciones sincronización del ejercicio 2
   * CS-Est2: Un estudiante que está en la fiesta no puede salir si el decano ha sido avisado
@@ -28,25 +31,32 @@ class Salon(cap: Int) {
     //El estudiante llama a este método cuando quiere entrar en la fiesta
     if (!despierto){
       entran.acquire()
+      mutex.acquire()
       fiesteros += 1
+      fiesta += id
       log(s"Estudiante $id llega a la fiesta. Hay $fiesteros fiesteros")
       if (fiesteros == cap) { // Aviso al decano
         log(s"El estudiante $id avisa al decano")
         decano.release()
       }
       entran.release()
+      mutex.release()
     }
   }
 
   def salgoFiesta(id: Int) = {
     //estudiante id llama a este método cuando quiere abandonar la fiesta
-    if (fiesteros > 0) {
+    if (fiesteros > 0 && fiesta.contains(id)) {
       salen.acquire()
+      mutex.acquire()
       fiesteros -= 1
+      fiesta -= id
       log(s"Estudiante $id sale de la fiesta. Quedan $fiesteros fiesteros")
       if (fiesteros == 0 && despierto) ultimo.release()
       salen.release()
+      mutex.release()
     }
+
   }
 
   def meDuermo() = {
