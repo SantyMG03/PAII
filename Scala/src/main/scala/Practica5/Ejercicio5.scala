@@ -22,7 +22,7 @@ object gestorAgua {
     mutex.acquire()
     numO += 1
     log(s"Oxígeno $id quiere formar una molécula")
-    if (numH + numO < 3) {
+    if (numH + numO < 3) { // Mirar hidrogeno, esta explicado el funcionamiento
       mutex.release()
       molecula.acquire()
       mutex.acquire()
@@ -48,9 +48,9 @@ object gestorAgua {
       esperaH.release()
     }
     if (numH + numO < 3) {
-      mutex.release()
-      molecula.acquire()
-      mutex.acquire()
+      mutex.release() // Suelto el mutex para no hacer un aquire dentro del mutex
+      molecula.acquire() // Para la ejecucion si no es posible hacer la molecula
+      mutex.acquire() // Cuando se libere molecula vuelvo a tomar el mutex asi no bloqueo la ejecucion
     } else {
       log(s"      Molecula formada!!!")
     }
