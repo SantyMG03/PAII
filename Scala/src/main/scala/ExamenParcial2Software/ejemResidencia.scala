@@ -16,7 +16,7 @@ class Salon(cap: Int) {
   private val decano = new Semaphore(0)
   private val ultimo = new Semaphore(0)
   private val entran = new Semaphore(1)
-  private val salen = new Semaphore(1)
+  private val salen = new Semaphore(0)
   private val mutex = new Semaphore(1)
 
   private var despierto = false
@@ -29,34 +29,30 @@ class Salon(cap: Int) {
 
   def llegoAFiesta(id: Int) = {
     //El estudiante llama a este método cuando quiere entrar en la fiesta
-    if (!despierto){
-      entran.acquire()
-      mutex.acquire()
-      fiesteros += 1
-      fiesta += id
-      log(s"Estudiante $id llega a la fiesta. Hay $fiesteros fiesteros")
-      if (fiesteros == cap) { // Aviso al decano
-        log(s"El estudiante $id avisa al decano")
-        decano.release()
-      }
-      entran.release()
-      mutex.release()
+
+    entran.acquire()
+    mutex.acquire()
+    fiesteros += 1
+    log(s"Estudiante $id llega a la fiesta. Hay $fiesteros fiesteros")
+    entran.release()
+    if (fiesteros == 1) salen.release()
+    if (fiesteros == cap) { // Aviso al decano
+      log(s"El estudiante $id avisa al decano")
+      decano.release()
     }
+    mutex.release()
+
   }
 
   def salgoFiesta(id: Int) = {
     //estudiante id llama a este método cuando quiere abandonar la fiesta
-    if (fiesteros > 0 && fiesta.contains(id)) {
-      salen.acquire()
-      mutex.acquire()
-      fiesteros -= 1
-      fiesta -= id
-      log(s"Estudiante $id sale de la fiesta. Quedan $fiesteros fiesteros")
-      if (fiesteros == 0 && despierto) ultimo.release()
-      salen.release()
-      mutex.release()
-    }
-
+    salen.acquire()
+    mutex.acquire()
+    fiesteros -= 1
+    log(s"Estudiante $id sale de la fiesta. Quedan $fiesteros fiesteros")
+    if (fiesteros == 0 && despierto) ultimo.release()
+    if (fiesteros > 0) salen.release()
+    mutex.release()
   }
 
   def meDuermo() = {
