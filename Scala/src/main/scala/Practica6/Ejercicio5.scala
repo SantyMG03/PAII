@@ -4,43 +4,74 @@ import java.util.concurrent.locks.ReentrantLock
 import scala.util.Random
 
 object Barca{
-  
-  private var nIPhone = 0
+
+  private var nIphone = 0
   private var nAndroid = 0
   private val lock = new ReentrantLock(true)
   private val cIphone = lock.newCondition()
   private val cAndroid = lock.newCondition()
-  private var suben = true
   private var bajan = false
   private var viaje = false
 
   def paseoIphone(id:Int) =  {
     lock.lock()
     try {
-      while (nIPhone == 2) 
+      while (nIphone + 1 == 3 || viaje || bajan) cIphone.await()
+      nIphone += 1
+      log(s"Estudiante IPhone $id se sube a la barca. Hay: iphone=$nIphone,android=$nAndroid ")
+      if (nAndroid + nIphone == 4) {
+        viaje = true
+      }
+      if (viaje) {
+        log(s"Empieza el viaje....")
+        Thread.sleep(Random.nextInt(200))
+        log(s"fin del viaje....")
+        bajan = true
+        viaje = false
+        cIphone.signalAll()
+        cAndroid.signalAll()
+      }
+      while (!bajan) cIphone.await()
+      nIphone -= 1
+      log(s"Estudiante IPhone $id se baja de la barca. Hay: iphone=$nIphone,android=$nAndroid ")
+      if (nIphone + nAndroid == 0) {
+        cIphone.signalAll()
+        cAndroid.signalAll()
+      }
+    } finally {
+      lock.unlock()
     }
-    log(s"Estudiante IPhone $id se sube a la barca. Hay: iphone=$nIPhone,android=$nAndroid ")
-    
-    
-      //log(s"Empieza el viaje....")
-      //Thread.sleep(Random.nextInt(200))
-      //log(s"fin del viaje....")
-      
-    
-    log(s"Estudiante IPhone $id se baja de la barca. Hay: iphone=$nIPhone,android=$nAndroid ")
-   
   }
 
   def paseoAndroid(id:Int) =  {
-    
-    log(s"Estudiante Android $id se sube a la barca. Hay: iphone=$nIPhone,android=$nAndroid ")
-    
-      //log(s"Empieza el viaje....")
-      //Thread.sleep(Random.nextInt(200))
-      //log(s"fin del viaje....")
-      
-    log(s"Estudiante Android $id se baja de la barca. Hay: iphone=$nIPhone,android=$nAndroid ")
-    
+    lock.lock()
+    try {
+      while (nAndroid + 1 == 3 || viaje || bajan) cAndroid.await()
+      nAndroid += 1
+      log(s"Estudiante Android $id se sube a la barca. Hay: iphone=$nIphone,android=$nAndroid ")
+      if (nAndroid + nIphone == 4) {
+        viaje = true
+      }
+      if (viaje == true) {
+        log(s"Empieza el viaje....")
+        Thread.sleep(Random.nextInt(200))
+        log(s"fin del viaje....")
+        bajan = true
+        viaje = false
+        cIphone.signalAll()
+        cAndroid.signalAll()
+      }
+      while (!bajan) cAndroid.await()
+      nAndroid -= 1
+      log(s"Estudiante Android $id se baja de la barca. Hay: iphone=$nIphone,android=$nAndroid ")
+      if (nIphone + nAndroid == 0) {
+        bajan = false
+        cIphone.signalAll()
+        cAndroid.signalAll()
+      }
+    } finally {
+      lock.unlock()
+    }
   }
 }
 object Ejercicio5 {
