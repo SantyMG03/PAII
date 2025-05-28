@@ -1,19 +1,50 @@
 package Practica6
 
+import java.util.concurrent.locks.ReentrantLock
 import scala.util.Random
 
 object Parejas{
-  
 
-  def llegaHombre(id:Int) = {
+  private val lock = new ReentrantLock(true)
+  private val chombre = lock.newCondition()
+  private val cmujer = lock.newCondition()
+  private var hombreEspera = false
+  private var mujerEspera = false
 
-    log(s"Hombre $id quiere formar pareja")
-
+  def llegaHombre(id:Int) =  {
+    lock.lock()
+    try {
+      while(hombreEspera) chombre.await()
+      log(s"Hombre $id quiere formar pareja")
+      hombreEspera = true
+      if (mujerEspera) {
+        log(s"Se forma una pareja")
+        hombreEspera = false
+        mujerEspera = false
+        cmujer.signal()
+        chombre.signal()
+      }
+    } finally {
+      lock.unlock()
+    }
   }
 
   def llegaMujer(id: Int) =  {
-   
-    log(s"Mujer $id quiere formar pareja")
+    lock.lock()
+    try {
+      while(mujerEspera) cmujer.await()
+      log(s"Mujer $id quiere formar pareja")
+      mujerEspera = true
+      if (hombreEspera) {
+        log(s"Se forma una pareja")
+        hombreEspera = false
+        mujerEspera = false
+        cmujer.signal()
+        chombre.signal()
+      }
+    } finally {
+      lock.unlock()
+    }
   }
 }
 object Ejercicio3 {

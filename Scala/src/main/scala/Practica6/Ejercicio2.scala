@@ -1,28 +1,44 @@
 package Practica6
 
+import java.util.concurrent.locks.ReentrantLock
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
 class Recursos(rec:Int) {
 
-  
   private var numRec = rec
+  private var cola = new ListBuffer[Int]
+  private val lock = new ReentrantLock(true)
+  private val cEntra = lock.newCondition()
+  private val cSalida = lock.newCondition()
   
   def pidoRecursos(id:Int,num:Int) =  {
     //proceso id solicita num recursos
-      
+    lock.lock()
+    try {
       log(s"Proceso $id pide $num recursos.")
-      
-    
+      while (numRec < num) cEntra.await()
+      numRec -= num
+      cola.append(id)
       log(s"Proceso $id coge $num recursos. Quedan $numRec")
-      
+      cSalida.signalAll()
+    } finally {
+      lock.unlock()
+    }
   }
 
   def libRecursos(id:Int,num:Int) =  {
     //proceso id devuelve num recursos
-   
-    log(s"Proceso $id devuelve $num recursos. Quedan $numRec")
-    
+    lock.lock()
+    try {
+      while (cola.head != id) cSalida.await()
+      numRec += num
+      cola.remove(0)
+      log(s"Proceso $id devuelve $num recursos. Quedan $numRec")
+      cEntra.signalAll()
+    } finally {
+      lock.unlock()
+    }
   }
 }
 object Ejercicio2 {

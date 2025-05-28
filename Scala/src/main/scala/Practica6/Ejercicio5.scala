@@ -1,14 +1,24 @@
 package Practica6
 
+import java.util.concurrent.locks.ReentrantLock
 import scala.util.Random
 
 object Barca{
+  
   private var nIPhone = 0
   private var nAndroid = 0
-  
+  private val lock = new ReentrantLock(true)
+  private val cIphone = lock.newCondition()
+  private val cAndroid = lock.newCondition()
+  private var suben = true
+  private var bajan = false
+  private var viaje = false
 
   def paseoIphone(id:Int) =  {
-   
+    lock.lock()
+    try {
+      while (nIPhone == 2) 
+    }
     log(s"Estudiante IPhone $id se sube a la barca. Hay: iphone=$nIPhone,android=$nAndroid ")
     
     
