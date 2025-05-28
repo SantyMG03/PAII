@@ -10,14 +10,20 @@ object Barca{
   private val lock = new ReentrantLock(true)
   private val cIphone = lock.newCondition()
   private val cAndroid = lock.newCondition()
+  private var puertaA = true
+  private var puertaI = true
   private var bajan = false
   private var viaje = false
 
   def paseoIphone(id:Int) =  {
     lock.lock()
     try {
-      while (nIphone + 1 == 3 || viaje || bajan) cIphone.await()
+      while (viaje || bajan || !puertaI) cIphone.await()
       nIphone += 1
+      if (nAndroid + nIphone == 3){
+        if (nIphone == 3 || nAndroid == 2) puertaA = false
+        if (nIphone == 2) puertaI = false
+      }
       log(s"Estudiante IPhone $id se sube a la barca. Hay: iphone=$nIphone,android=$nAndroid ")
       if (nAndroid + nIphone == 4) {
         viaje = true
@@ -35,6 +41,9 @@ object Barca{
       nIphone -= 1
       log(s"Estudiante IPhone $id se baja de la barca. Hay: iphone=$nIphone,android=$nAndroid ")
       if (nIphone + nAndroid == 0) {
+        bajan = false
+        puertaA = true
+        puertaI = true
         cIphone.signalAll()
         cAndroid.signalAll()
       }
@@ -46,8 +55,12 @@ object Barca{
   def paseoAndroid(id:Int) =  {
     lock.lock()
     try {
-      while (nAndroid + 1 == 3 || viaje || bajan) cAndroid.await()
+      while (viaje || bajan || !puertaA) cAndroid.await()
       nAndroid += 1
+      if (nAndroid + nIphone == 3){
+        if (nAndroid == 3 || nIphone == 2) puertaI = false
+        if (nAndroid == 2) puertaA = false
+      }
       log(s"Estudiante Android $id se sube a la barca. Hay: iphone=$nIphone,android=$nAndroid ")
       if (nAndroid + nIphone == 4) {
         viaje = true
@@ -66,6 +79,8 @@ object Barca{
       log(s"Estudiante Android $id se baja de la barca. Hay: iphone=$nIphone,android=$nAndroid ")
       if (nIphone + nAndroid == 0) {
         bajan = false
+        puertaA = true
+        puertaI = true
         cIphone.signalAll()
         cAndroid.signalAll()
       }
