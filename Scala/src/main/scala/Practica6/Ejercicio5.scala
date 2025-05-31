@@ -19,13 +19,14 @@ object Barca{
     lock.lock()
     try {
       while (viaje || bajan || !puertaI) cIphone.await()
+      // Si estan viajando o bajando o la puertaI cerrada entonces esperan
       nIphone += 1
-      if (nAndroid + nIphone == 3){
-        if (nIphone == 3 || nAndroid == 2) puertaA = false
-        if (nIphone == 2) puertaI = false
+      if (nAndroid + nIphone == 3){ // Cuando la suma total de 3 -> CUIDADO
+        if (nIphone == 3 || nAndroid == 2) puertaA = false // Si hay 2 Andr o 3 Ipho cierro la entrada de Andr
+        if (nIphone == 2) puertaI = false // Si el numero de Ipho es 2 cierro la puerta
       }
       log(s"Estudiante IPhone $id se sube a la barca. Hay: iphone=$nIphone,android=$nAndroid ")
-      if (nAndroid + nIphone == 4) {
+      if (nAndroid + nIphone == 4) { // Si hay 4 entonces viajo
         viaje = true
       }
       if (viaje) {
@@ -35,9 +36,9 @@ object Barca{
         bajan = true
         viaje = false
         cIphone.signalAll()
-        cAndroid.signalAll()
+        cAndroid.signalAll() // Aviso a todos los Android y Iphone esperando a bajar
       }
-      while (!bajan) cIphone.await()
+      while (!bajan) cIphone.await() // Mientras no se puedan bajar esperan
       nIphone -= 1
       log(s"Estudiante IPhone $id se baja de la barca. Hay: iphone=$nIphone,android=$nAndroid ")
       if (nIphone + nAndroid == 0) {
@@ -45,7 +46,7 @@ object Barca{
         puertaA = true
         puertaI = true
         cIphone.signalAll()
-        cAndroid.signalAll()
+        cAndroid.signalAll() // Aviso a todos los Android y Iphone esperando a subir
       }
     } finally {
       lock.unlock()
@@ -55,6 +56,7 @@ object Barca{
   def paseoAndroid(id:Int) =  {
     lock.lock()
     try {
+      // Mismo planteamiento pero cambiando los await por el contrario que en Iphone
       while (viaje || bajan || !puertaA) cAndroid.await()
       nAndroid += 1
       if (nAndroid + nIphone == 3){

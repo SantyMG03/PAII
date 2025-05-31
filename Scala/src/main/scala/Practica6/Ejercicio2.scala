@@ -17,11 +17,11 @@ class Recursos(rec:Int) {
     lock.lock()
     try {
       log(s"Proceso $id pide $num recursos.")
-      while (numRec < num) cEntra.await()
+      while (numRec < num) cEntra.await() // Si no hay recursos espera
       numRec -= num
       cola.append(id)
       log(s"Proceso $id coge $num recursos. Quedan $numRec")
-      cSalida.signalAll()
+      cSalida.signalAll() // Aviso que q ya se puede salir
     } finally {
       lock.unlock()
     }
@@ -31,11 +31,11 @@ class Recursos(rec:Int) {
     //proceso id devuelve num recursos
     lock.lock()
     try {
-      while (cola.head != id) cSalida.await()
+      while (cola.head != id) cSalida.await() // Si no hay nadie que haya tomado recursos
       numRec += num
       cola.remove(0)
       log(s"Proceso $id devuelve $num recursos. Quedan $numRec")
-      cEntra.signalAll()
+      cEntra.signalAll() // Aviso a todos los que estaban esperando a tomar recursos
     } finally {
       lock.unlock()
     }

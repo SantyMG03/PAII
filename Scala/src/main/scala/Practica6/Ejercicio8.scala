@@ -15,16 +15,16 @@ object gestorAgua {
   private var oEsperando = 0;
 
   def hidrogeno(id: Int) = synchronized {
-    while (!puertaH) wait()
+    while (!puertaH) wait() // Si no esta abierta la puerta, entonces esperas (ya hay el numero suficiente de esta)
 
     log(s"Hidrógeno $id quiere formar una molécula")
     hEsperando += 1
 
-    if (hEsperando == 2) puertaH = false
+    if (hEsperando == 2) puertaH = false // Cuando hay 2 h cierro la puerta
 
-    if (hEsperando + oEsperando < 3) {
+    if (hEsperando + oEsperando < 3) { // Si no hay suficiente para formar moleculas, a dormir
       while (!molecula) wait()
-    } else {
+    } else { // Si las hay entonces las despierto
       molecula = true
       notifyAll()
     }
@@ -32,13 +32,13 @@ object gestorAgua {
     log(s"Hidrógeno $id participa en la formación de la molécula")
     hEsperando -= 1
 
-    if (oEsperando + hEsperando == 0) {
+    if (oEsperando + hEsperando == 0) { // Cuando ya se formo la molecula abro las puertas y cierro molecula
       log("      ¡Molécula formada!")
       molecula = false
       puertaO = true
       puertaH = true
     }
-    notifyAll()
+    notifyAll() // Aviso a todos para que puedan entrar a formar molecula
   }
 
 

@@ -8,17 +8,17 @@ class Bandeja(R:Int){
 
 
   def quieroRacion(id:Int)= synchronized {
-    while (raciones == 0) wait()
+    while (raciones == 0) wait() // Si no hay raciones esperas
     raciones -= 1
     log(s"Niño $id ha cogido una ración. Quedan $raciones")
-    if (raciones == 0) notify()
+    if (raciones == 0) notify() // Aviso al unico dormido (pastelero)
   }
   
   def tarta()= synchronized {
-    while(raciones != 0) wait()
+    while(raciones != 0) wait() // Si hay raciones esperas
     raciones = R
     log("El pastelero pone una nueva tarta.")
-    notifyAll()
+    notifyAll() // Aviso a todos los comensales
   }
 }
 object Ejercicio6 {

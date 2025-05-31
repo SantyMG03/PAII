@@ -9,23 +9,30 @@ object Guarderia{
   
 
   def entraBebe(id:Int) = synchronized {
-    while (nBebe + 1 > 3 * nAdulto || nAdulto == 0) wait()
+    // Si entrase un bebe y no se cumple la condicion, entonces esperas
+    while (nBebe + 1 > 3 * nAdulto || nAdulto == 0) wait() 
     nBebe += 1
     log(s"Ha llegado un bebé. Bebés=$nBebe, Adultos=$nAdulto")
   }
+  
   def saleBebe(id:Int) = synchronized {
+    // El bebe puede salir cuando quiera
     nBebe -= 1
     log(s"Ha salido un bebé. Bebés=$nBebe, Adultos=$nAdulto")
-    notifyAll()
+    notifyAll() // Avisa a todos los adultos, ahora hay menos bebes y quiza algun adulto sale
   }
+  
   def entraAdulto(id:Int) = synchronized {
+    // El adulto puede entrar cuando quiera
     nAdulto += 1
     log(s"Ha llegado un adulto. Bebés=$nBebe, Adultos=$nAdulto")
-    notifyAll()
+    notifyAll() // Avisa a todos los bebes, ahora hay mas adulto y quiza algun bebe entra
     
   }
+  
   def saleAdulto(id:Int) = synchronized {
-    while (nBebe > 3 * (nAdulto - 1)) wait()
+    // Si saliese un adulto y no se cumple la condicion, entonces esperas
+    while (nBebe > 3 * (nAdulto - 1)) wait() 
     nAdulto -= 1
     log(s"Ha salido un adulto. Bebés=$nBebe, Adultos=$nAdulto")
   }

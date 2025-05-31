@@ -8,42 +8,40 @@ class Coche(C:Int) extends Thread{
   //CS-pasajero2: un pasajero que está en el coche no se puede bajarse hasta que haya terminado el viaje
   //CS-coche: el coche espera a que se hayan subido C pasajeros para dar una vuelta
   private var numPas = 0
-  private var entrada = true
-  private var fin = false
-  private var lleno = false
+  private var entrada = true // Permite acceso al coche
+  private var fin = false // Permite la salida del coche
+  private var lleno = false // Permite el viaje
 
   def nuevoPaseo(id:Int)= synchronized {
-    while (!entrada) wait()
+    while (!entrada) wait() // Si la puerta de entrada no esta abierta entonces esperas
     numPas += 1
     log(s"El pasajero $id sube al coche. Hay $numPas pasajeros")
-    if (numPas == C) {
+    if (numPas == C) { // Cuando se alcanza la capacidad maxima cierro la entrada y aviso que esta lleno
       entrada = false
       lleno = true
-      notify()
+      notify() // Aviso al espera lleno
     }
 
-    while(!fin) wait()
+    while(!fin) wait() // Mientras que no haya acabado el viaje esperas
     numPas -= 1
     log(s"El pasajero $id baja del coche. Hay $numPas pasajeros")
-    if (numPas == 0) {
-      fin = false
+    if (numPas == 0) { // Cuando se vacia por completo abro la entrada y cierro la salida 
+      fin = false 
       entrada = true
-      notifyAll()
+      notifyAll() // Aviso a todos los dormidos para que puedan volver a entrar
     }
   }
 
   def esperaLleno = synchronized {
-    //el coche espera a que se llene para dar un paseo
-    while (!lleno) wait()
+    while (!lleno) wait() // Mientras el coche no este lleno no puedo iniciar el viaje
     log(s"        Coche lleno!!! empieza el viaje....")
     lleno = false
   }
 
   def finViaje = synchronized {
-    //el coche indica que se ha terminado el viaje
     log(s"        Fin del viaje... :-(")
-    fin = true
-    notifyAll()
+    fin = true // Permite la bajada
+    notifyAll() // Aviso a todos los dormidos esperando a bajar
   }
 
   override def run = {

@@ -14,15 +14,15 @@ object Parejas{
   def llegaHombre(id:Int) =  {
     lock.lock()
     try {
-      while(hombreEspera) chombre.await()
+      while(hombreEspera) chombre.await() // Si ya ha llegado un hombre los siguientes esperar
       log(s"Hombre $id quiere formar pareja")
       hombreEspera = true
-      if (mujerEspera) {
+      if (mujerEspera) { // Si el hombre es el segundo de la pareja en llegar
         log(s"Se forma una pareja")
         hombreEspera = false
         mujerEspera = false
         cmujer.signal()
-        chombre.signal()
+        chombre.signal() // Aviso a todos los hombres y mujeres que estan esperando
       }
     } finally {
       lock.unlock()
@@ -32,7 +32,7 @@ object Parejas{
   def llegaMujer(id: Int) =  {
     lock.lock()
     try {
-      while(mujerEspera) cmujer.await()
+      while(mujerEspera) cmujer.await() // Igual que el hombre pero al reves que con hombres
       log(s"Mujer $id quiere formar pareja")
       mujerEspera = true
       if (hombreEspera) {
