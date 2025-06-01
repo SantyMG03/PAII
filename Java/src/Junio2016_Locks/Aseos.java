@@ -4,6 +4,14 @@ package Junio2016_Locks;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Para hacer este ejercicio con monitores en vez de con locks simplemente hay que:
+ * 	- Poner synchronized en los metodos.
+ * 	- Cambiar los .await() por simplemente wait()
+ * 	- Añadir las CS correspondientes (ya sea con booleans o directamente la condicion)
+ *
+ * 	CS-1 El aseo tiene que estar vacio para que entre el equipo de limpieza
+ */
 public class Aseos {
 
 	ReentrantLock lock = new ReentrantLock(true);
