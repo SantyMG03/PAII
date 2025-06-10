@@ -1,4 +1,4 @@
-package parte_2025_4
+package Practica7
 
 import java.awt.*
 import java.awt.event.*
@@ -78,7 +78,7 @@ class Panel extends JPanel with IPanel:
       case _: NumberFormatException =>
         JOptionPane.showMessageDialog(this, "Número no válido. Por favor, inténtalo de nuevo.", "Error", JOptionPane.ERROR_MESSAGE)
         0 // Return 0 or some default value if input is invalid
-
+  
   // Write results to text area
   def writePrimes(primes: scala.List[PrimesPair]): Unit =
     for (p, i) <- primes.zipWithIndex do

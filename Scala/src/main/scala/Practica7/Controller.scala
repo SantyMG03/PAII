@@ -1,4 +1,4 @@
-package parte_2025_4
+package Practica7
 
 import java.awt.event.{ActionEvent, ActionListener}
 
