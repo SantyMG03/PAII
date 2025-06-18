@@ -1,6 +1,5 @@
 package Practica7
 
-import java.awt.{BorderLayout, Panel => AWTPanel}
 import javax.swing.{JFrame, SwingUtilities, WindowConstants}
 
 object Main {
