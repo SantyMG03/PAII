@@ -1,4 +1,4 @@
-package Practica7
+package PracticaGUI
 
 import java.awt.event.{ActionEvent, ActionListener}
 

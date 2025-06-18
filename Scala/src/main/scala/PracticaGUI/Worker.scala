@@ -1,4 +1,4 @@
-package Practica7
+package PracticaGUI
 
 import javax.swing.SwingWorker
 import scala.collection.mutable.ListBuffer
